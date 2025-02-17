@@ -3,38 +3,49 @@ import PostComments from ".";
 import userEvent from "@testing-library/user-event";
 
 describe("PostComments Component", () => {
-  it("deve permitir adicionar um comentário", () => {
-    render(<PostComments />);
+    //Teste Dois Comentários
+    it("deve permitir a inserção de dois comentários", () => {
+        render(<PostComments />);
 
-    const textarea = screen.getByRole("textbox");
-    const button = screen.getByRole("button", { name: /comentar/i });
+        const textarea = screen.getByTestId("comment-input");
+        const button = screen.getByTestId("comment-button");
 
-    userEvent.type(textarea, "Meu comentário de teste");
-    fireEvent.click(button);
+        // Adicionando o primeiro comentário
+        fireEvent.change(textarea, { target: { value: "Primeiro comentário" } });
+        fireEvent.click(button);
 
-    expect(screen.getByText("Meu comentário de teste")).toBeInTheDocument();
-  });
+        // Adicionando o segundo comentário
+        fireEvent.change(textarea, { target: { value: "Segundo comentário" } });
+        fireEvent.click(button);
 
-  it("não deve permitir comentários vazios", () => {
-    render(<PostComments />);
+        // Verifica se os dois comentários foram renderizados
+        const comments = screen.getAllByTestId("comment-item");
+        expect(comments).toHaveLength(2);
 
-    const button = screen.getByRole("button", { name: /comentar/i });
-
-    fireEvent.click(button);
-
-    expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
-  });
-
-  it("não deve permitir comentários vazios", () => {
-    render(<PostComments />);
-
-    const textarea = screen.getByRole("textbox");
-    const button = screen.getByRole("button", { name: /comentar/i });
-
-    fireEvent.change(textarea, { target: { value: " " } }); 
-    fireEvent.click(button);
-
-    expect(screen.queryByText(" ")).not.toBeInTheDocument(); 
-});
+        expect(screen.getByText("Primeiro comentário")).toBeInTheDocument();
+        expect(screen.getByText("Segundo comentário")).toBeInTheDocument();
+    });
+    //Teste Comentários vazios
+    it("não deve permitir comentários vazios", () => {
+        render(<PostComments />);
+    
+        const button = screen.getByTestId("comment-button");
+    
+        fireEvent.click(button);
+    
+        expect(screen.queryByTestId("comment-item")).not.toBeInTheDocument();
+      });
+    
+      it("não deve permitir comentários vazios com apenas espaços", () => {
+        render(<PostComments />);
+    
+        const textarea = screen.getByTestId("comment-input");
+        const button = screen.getByTestId("comment-button");
+    
+        fireEvent.change(textarea, { target: { value: " " } });
+        fireEvent.click(button);
+    
+        expect(screen.queryByTestId("comment-item")).not.toBeInTheDocument();
+      });
 
 });

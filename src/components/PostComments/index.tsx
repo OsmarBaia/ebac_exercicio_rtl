@@ -8,19 +8,20 @@ const PostComments = () => {
 
     function handleAddComment(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-
-        if (tempComment.trim() === "") return; 
+    
+        if (tempComment.trim() === "") return; // Evita adicionar comentários vazios
+    
         const newComment = new Comment(tempComment);
         setTempComment('');
         setComments([...comments, newComment]);
     }
-
+    
     return (
         <div>
-            <ul className={styles['post-comments']}>
+            <ul className={styles['post-comments']} data-testid="comment-list">
                 {comments.map(({ comment, id }) => (
-                    <li className={styles['post-comment']} key={id}>
-                        <p className={styles['post-comment-content']}>
+                    <li className={styles['post-comment']} key={id} data-testid="comment-item">
+                        <p className={styles['post-comment-content']} data-testid="comment-content">
                             {comment}
                         </p>
                     </li>
@@ -32,13 +33,14 @@ const PostComments = () => {
                     onChange={e => setTempComment(e.target.value)}
                     required
                     className={styles['post-comments-form-textarea']}
+                    data-testid="comment-input"
                 />
-                <button type="submit" className={styles['post-comments-form-button']}>
+                <button type="submit" className={styles['post-comments-form-button']} data-testid="comment-button">
                     Comentar
                 </button>
             </form>
         </div>
     );
-};
+}
 
 export default PostComments;
